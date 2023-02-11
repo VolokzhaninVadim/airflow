@@ -19,3 +19,10 @@ sudo pip3 install docker-compose
 
 # Airflow
 ![airflow_64x64_emoji_transparent.png](https://cwiki.apache.org/confluence/download/attachments/145723561/airflow_64x64_emoji_transparent.png)
+
+## Generate FERNET_KEY
+```
+from cryptography.fernet import Fernet
+FERNET_KEY = Fernet.generate_key().decode()
+print(FERNET_KEY)
+```
