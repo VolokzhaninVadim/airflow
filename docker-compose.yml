@@ -5,13 +5,15 @@ services:
         container_name: airflow_postgres
         restart: always
         environment:
-            - POSTGRES_USER=${POSTGRES_USER}
-            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-            - POSTGRES_DB=${POSTGRES_DB}
+            - POSTGRES_USER=airflow
+            - POSTGRES_PASSWORD=airflow
+            - POSTGRES_DB=airflow
         logging:
             options:
                 max-size: 10m
                 max-file: "3"
+        ports:
+            - "5432:5432"
         networks:
             - bridge
 
