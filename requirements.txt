@@ -11,3 +11,4 @@ pymorphy2-dicts-ru==2.4.417127.4579844
 requests==2.28.2
 urllib3==1.26.14
 stem==1.8.1
+flake8==6.0.0
