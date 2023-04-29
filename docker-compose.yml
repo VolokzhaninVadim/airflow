@@ -34,6 +34,7 @@ services:
             - /opt/cuda:/usr/local/cuda
             - ./dags/:/usr/local/airflow/dags
             - /home/volokzhanin/docker/private_cloud/proxy/certs/:/certs
+            - /mnt/backup/:/backup
         ports:
             - "8080:8080"
         devices:
