@@ -6,4 +6,4 @@ pymorphy2==0.9.1
 pymorphy2-dicts-ru==2.4.417127.4579844
 urllib3==1.26.14
 stem==1.8.1
-git+https://github.com/VolokzhaninVadim/data_source.git@fa06b5e7fb068fee1b881a4991bf672bc806b929
+git+https://github.com/VolokzhaninVadim/data_source.git@657c796e0f2aa6cc679472aa79e064d28cd332d8
