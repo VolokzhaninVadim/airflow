@@ -51,7 +51,7 @@ class Backup:
         self.s3 = S3(**self.s3_args_dict)
         self.paths = paths
 
-    def get_files_name(self, name_list: List[str], replace: str)-> List:
+    def get_files_name(self, name_list: List[str], replace: str) -> List:
         '''
         Get file names.
 
@@ -92,3 +92,15 @@ class Backup:
                 'add': list(set(local_result_list).difference(set(s3_result_list)))
             }}
         return result
+
+    def update_s3(self) -> None:
+        '''
+        Update files in s3.
+        '''
+        result = self.get_s3_changes()
+        for key in result.keys():
+            result_path = result.get(key)
+            if result_path['delete']:
+                [self.s3.delete_file(file_name=f'{key}{i}'[1:]) for i in result_path['delete']]
+            if result_path['add']:
+                [self.s3.save_file(path_to_file=f'{key}{i}', path_s3=key[1:len(key) - 1]) for i in result_path['add']]
