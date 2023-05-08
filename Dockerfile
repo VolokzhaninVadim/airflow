@@ -147,8 +147,7 @@ RUN  pip install "apache-airflow==${AIRFLOW_VERSION}" --constraint "${CONSTRAINT
 ################ Install  encryption ##############
 RUN apt-get update && \
     apt-get install -y \
-        wget gnupg gnupg2 gnupg1 unzip psmisc && \
-    apt-get install p7zip-full -y
+        wget gnupg gnupg2 gnupg1 unzip psmisc
 
 ################ Install chrome ##############
 ARG CHROME_VERSION="google-chrome-stable"
