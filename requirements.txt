@@ -1,14 +1,9 @@
-bs4==0.0.1
 numpy==1.24.1
-selenium==4.8.0
-html5lib==1.1
 flask_bcrypt
 flask_jwt_extended
-fake-useragent==1.1.1
 pandas==1.5.3
 pymorphy2==0.9.1
 pymorphy2-dicts-ru==2.4.417127.4579844
-requests==2.28.2
 urllib3==1.26.14
 stem==1.8.1
-flake8==6.0.0
+git+https://github.com/VolokzhaninVadim/data_source.git@657c796e0f2aa6cc679472aa79e064d28cd332d8
