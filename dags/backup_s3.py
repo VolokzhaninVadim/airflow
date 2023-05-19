@@ -69,6 +69,11 @@ with DAG(
         op_kwargs={'path': 'private_media_server'}
     )
 
+    update_media_airflow = PythonOperator(
+        provide_context=True,
+        task_id='update_airflow',
+        python_callable=update_s3,
+        op_kwargs={'path': 'airflow'}
+    )
 
-
-    update_dns >> update_private_cloud
+    update_private_cloud >> update_media_serve >> update_media_airflow >> update_dns

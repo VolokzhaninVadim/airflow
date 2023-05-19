@@ -18,7 +18,8 @@ class Backup:
         paths: dict = {
             'dns_path': '/backup/vvy_dns/',
             'private_cloud_path': '/backup/private_cloud/',
-            'private_media_server': '/backup/vvy_media_server/'
+            'private_media_server': '/backup/vvy_media_server/',
+            'airflow': '/backup/vvy_airflow'
         },
         **kwargs
     ):
@@ -39,7 +40,8 @@ class Backup:
             Paths to backup, by default {
             'dns_path': '/backup/vvy_dns/',
             'private_cloud_path': '/backup/private_cloud/',
-            'private_media_server': '/backup/vvy_media_server/'
+            'private_media_server': '/backup/vvy_media_server/',
+            'airflow': '/backup/vvy_airflow'
             }
         '''
         self.endpoint_url = endpoint_url
