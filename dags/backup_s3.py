@@ -19,15 +19,19 @@ s3_args_dict = {
     'bucket': S3_BUCKET
 }
 
-
-def update_s3() -> None:
+def update_s3(path: str) -> None:
     '''
-    Update IP on https://www.duckdns.org/
+    Update files in s3 for dns.
+
+    Parameters
+    ----------
+    path : str
+        Path for update data in S3.
     '''
     # For update ip on duckdns
     from src.backup_s3 import Backup
     backup = Backup(**s3_args_dict)
-    backup.update_s3()
+    backup.update_s3(dict_path=path)
 
 
 args = {
@@ -37,13 +41,34 @@ args = {
 
 with DAG(
     dag_id='update_s3',
-    schedule='@hourly',
-    start_date=pendulum.datetime(2023, 2, 12, tz='Europe/Moscow'),
-    description='Обновлениу backup сервера',
+    schedule='@daily',
+    start_date=pendulum.datetime(2023, 5, 13, tz='Europe/Moscow'),
+    description='Делаем backup сервера',
     catchup=False,
     default_args=args
-) as dag:
-    update_duckdns = PythonOperator(
-        task_id='update_s3',
-        python_callable=update_s3
+    ) as dag:
+
+    update_dns = PythonOperator(
+        provide_context=True,
+        task_id='update_dns',
+        python_callable=update_s3,
+        op_kwargs={'path': 'dns_path'}
     )
+
+    update_private_cloud = PythonOperator(
+        provide_context=True,
+        task_id='update_private_cloud',
+        python_callable=update_s3,
+        op_kwargs={'path': 'private_cloud_path'}
+    )
+
+    update_media_serve = PythonOperator(
+        provide_context=True,
+        task_id='update_media_serve',
+        python_callable=update_s3,
+        op_kwargs={'path': 'private_media_server'}
+    )
+
+
+
+    update_dns >> update_private_cloud

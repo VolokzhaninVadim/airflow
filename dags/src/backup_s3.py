@@ -16,7 +16,9 @@ class Backup:
         aws_secret_access_key: str,
         bucket: str,
         paths: dict = {
-            'dns_path': '/backup/vvy_dns/'
+            'dns_path': '/backup/vvy_dns/',
+            'private_cloud_path': '/backup/private_cloud/',
+            'private_media_server': '/backup/vvy_media_server/'
         },
         **kwargs
     ):
@@ -35,7 +37,9 @@ class Backup:
             Bucket in S3,
         paths : _type_, optional
             Paths to backup, by default {
-            'dns_path': '/backup/vvy_dns/'
+            'dns_path': '/backup/vvy_dns/',
+            'private_cloud_path': '/backup/private_cloud/',
+            'private_media_server': '/backup/vvy_media_server/'
             }
         '''
         self.endpoint_url = endpoint_url
@@ -50,25 +54,6 @@ class Backup:
         }
         self.s3 = S3(**self.s3_args_dict)
         self.paths = paths
-
-    def get_files_name(self, name_list: List[str], replace: str) -> List:
-        '''
-        Get file names.
-
-        Parameters
-        ----------
-        name_list : List[str]
-            Get files names
-        replace : str
-            String for replace to ''
-
-        Returns
-        -------
-        list
-            List of result.
-        '''
-        result_list = [re.sub(replace, '', i) for i in name_list]
-        return result_list
 
     def get_s3_changes(self) -> dict:
         '''
@@ -85,22 +70,31 @@ class Backup:
             # Gel local files
             local_result_list = os.listdir(path)
             # Get files from S3
-            s3_result_list = self.s3.get_objects_list(start_position=path)
+            s3_result_list = [i.replace(path[1:], '') for i in self.s3.get_objects_list(start_position=path[1:])]
             # Get result
-            result = {path: {
-                'delete': list(set(s3_result_list).difference(set(local_result_list))),
-                'add': list(set(local_result_list).difference(set(s3_result_list)))
-            }}
+            s3_result_list.sort(reverse=True)
+            delete_list = [i for i in s3_result_list[2:] if i.endswith('zip')]
+            add_list = [i for i in list(set(local_result_list).difference(set(s3_result_list))) if i.endswith('zip')]
+            result[path] = {
+                'delete': delete_list,
+                'add': add_list
+            }
         return result
 
-    def update_s3(self) -> None:
+    def update_s3(self, dict_path: str) -> None:
         '''
         Update files in s3.
+
+        Parameters
+        ----------
+        dict_path : str
+            Path in self.paths.
         '''
         result = self.get_s3_changes()
-        for key in result.keys():
-            result_path = result.get(key)
-            if result_path['delete']:
-                [self.s3.delete_file(file_name=f'{key}{i}'[1:]) for i in result_path['delete']]
-            if result_path['add']:
-                [self.s3.save_file(path_to_file=f'{key}{i}', path_s3=key[1:len(key) - 1]) for i in result_path['add']]
+        path = self.paths[dict_path]
+        result_path = result.get(path)
+        if result_path['delete']:
+            [self.s3.delete_file(file_name=f'{path}{i}'[1:]) for i in result_path['delete']]
+        elif result_path['add']:
+            [self.s3.save_file(path_to_file=f'{path}{i}', path_s3=path[1:] + i) for i in result_path['add']]
+            [os.remove(f'{path}{i}') for i in result_path['add']]
