@@ -17,7 +17,8 @@ class Backup:
         bucket: str,
         paths: dict = {
             'dns_path': '/backup/vvy_dns/',
-            'private_cloud_path': '/backup/private_cloud/'
+            'private_cloud_path': '/backup/private_cloud/',
+            'private_media_server': '/backup/vvy_media_server/'
         },
         **kwargs
     ):
@@ -37,7 +38,8 @@ class Backup:
         paths : _type_, optional
             Paths to backup, by default {
             'dns_path': '/backup/vvy_dns/',
-            'private_cloud_path': '/backup/private_cloud/'
+            'private_cloud_path': '/backup/private_cloud/',
+            'private_media_server': '/backup/vvy_media_server/'
             }
         '''
         self.endpoint_url = endpoint_url
@@ -71,9 +73,11 @@ class Backup:
             s3_result_list = [i.replace(path[1:], '') for i in self.s3.get_objects_list(start_position=path[1:])]
             # Get result
             s3_result_list.sort(reverse=True)
+            delete_list = [i for i in s3_result_list[2:] if i.endswith('zip')]
+            add_list = [i for i in list(set(local_result_list).difference(set(s3_result_list))) if i.endswith('zip')]
             result[path] = {
-                'delete': s3_result_list[2:],
-                'add': list(set(local_result_list).difference(set(s3_result_list)))
+                'delete': delete_list,
+                'add': add_list
             }
         return result
 

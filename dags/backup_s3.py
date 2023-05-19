@@ -62,4 +62,13 @@ with DAG(
         op_kwargs={'path': 'private_cloud_path'}
     )
 
+    update_media_serve = PythonOperator(
+        provide_context=True,
+        task_id='update_media_serve',
+        python_callable=update_s3,
+        op_kwargs={'path': 'private_media_server'}
+    )
+
+
+
     update_dns >> update_private_cloud
