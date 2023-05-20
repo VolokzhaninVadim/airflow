@@ -48,11 +48,26 @@ with DAG(
     default_args=args
     ) as dag:
 
+
+    update_media_airflow = PythonOperator(
+        provide_context=True,
+        task_id='update_airflow',
+        python_callable=update_s3,
+        op_kwargs={'path': 'airflow'}
+    )
+
     update_dns = PythonOperator(
         provide_context=True,
         task_id='update_dns',
         python_callable=update_s3,
         op_kwargs={'path': 'dns_path'}
+    )
+
+    update_jupyterlab = PythonOperator(
+        provide_context=True,
+        task_id='update_jupyterlab',
+        python_callable=update_s3,
+        op_kwargs={'path': 'jupyterlab'}
     )
 
     update_private_cloud = PythonOperator(
@@ -69,11 +84,4 @@ with DAG(
         op_kwargs={'path': 'private_media_server'}
     )
 
-    update_media_airflow = PythonOperator(
-        provide_context=True,
-        task_id='update_airflow',
-        python_callable=update_s3,
-        op_kwargs={'path': 'airflow'}
-    )
-
-    update_private_cloud >> update_media_serve >> update_media_airflow >> update_dns
+    update_media_airflow >> update_dns >> update_jupyterlab >> update_private_cloud >> update_media_serve
