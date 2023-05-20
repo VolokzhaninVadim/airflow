@@ -16,11 +16,12 @@ class Backup:
         aws_secret_access_key: str,
         bucket: str,
         paths: dict = {
-            'dns_path': '/backup/vvy_dns/',
-            'private_cloud_path': '/backup/private_cloud/',
+            'dns': '/backup/vvy_dns/',
+            'private_cloud': '/backup/private_cloud/',
             'private_media_server': '/backup/vvy_media_server/',
             'airflow': '/backup/vvy_airflow/',
-            'jupyterlab': '/backup/vvy_jupyterlab/'
+            'jupyterlab': '/backup/vvy_jupyterlab/',
+            'private_library': '/backup/private_library/'
         },
         **kwargs
     ):
@@ -43,7 +44,8 @@ class Backup:
             'private_cloud_path': '/backup/private_cloud/',
             'private_media_server': '/backup/vvy_media_server/',
             'airflow': '/backup/vvy_airflow',
-            'jupyterlab': '/backup/vvy_jupyterlab/'
+            'jupyterlab': '/backup/vvy_jupyterlab/',
+            'private_library': '/backup/private_library/'
             }
         '''
         self.endpoint_url = endpoint_url
