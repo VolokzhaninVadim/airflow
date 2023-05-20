@@ -19,7 +19,7 @@ class Backup:
             'dns_path': '/backup/vvy_dns/',
             'private_cloud_path': '/backup/private_cloud/',
             'private_media_server': '/backup/vvy_media_server/',
-            'airflow': '/backup/vvy_airflow'
+            'airflow': '/backup/vvy_airflow/'
         },
         **kwargs
     ):
