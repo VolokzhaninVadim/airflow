@@ -40,10 +40,10 @@ args = {
 }
 
 with DAG(
-    dag_id='update_s3',
-    schedule='0 5 * * *',
+    dag_id='update_docker_s3',
+    schedule='@daily',
     start_date=pendulum.datetime(2023, 5, 13, tz='Europe/Moscow'),
-    description='Делаем backup сервера',
+    description='Делаем backup сервера (docker)',
     catchup=False,
     default_args=args
     ) as dag:
