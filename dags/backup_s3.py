@@ -41,25 +41,40 @@ args = {
 
 with DAG(
     dag_id='update_s3',
-    schedule='@daily',
+    schedule='0 5 * * *',
     start_date=pendulum.datetime(2023, 5, 13, tz='Europe/Moscow'),
     description='Делаем backup сервера',
     catchup=False,
     default_args=args
     ) as dag:
 
+
+    update_airflow = PythonOperator(
+        provide_context=True,
+        task_id='update_airflow',
+        python_callable=update_s3,
+        op_kwargs={'path': 'airflow'}
+    )
+
     update_dns = PythonOperator(
         provide_context=True,
         task_id='update_dns',
         python_callable=update_s3,
-        op_kwargs={'path': 'dns_path'}
+        op_kwargs={'path': 'dns'}
+    )
+
+    update_jupyterlab = PythonOperator(
+        provide_context=True,
+        task_id='update_jupyterlab',
+        python_callable=update_s3,
+        op_kwargs={'path': 'jupyterlab'}
     )
 
     update_private_cloud = PythonOperator(
         provide_context=True,
         task_id='update_private_cloud',
         python_callable=update_s3,
-        op_kwargs={'path': 'private_cloud_path'}
+        op_kwargs={'path': 'private_cloud'}
     )
 
     update_media_serve = PythonOperator(
@@ -69,6 +84,11 @@ with DAG(
         op_kwargs={'path': 'private_media_server'}
     )
 
+    update_private_library = PythonOperator(
+        provide_context=True,
+        task_id='update_private_library',
+        python_callable=update_s3,
+        op_kwargs={'path': 'private_library'}
+    )
 
-
-    update_dns >> update_private_cloud
+    [update_dns, update_jupyterlab, update_airflow] >> update_private_cloud >> update_media_serve >> update_private_library
