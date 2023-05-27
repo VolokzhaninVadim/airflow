@@ -21,7 +21,8 @@ class Backup:
             'private_media_server': '/backup/vvy_media_server/',
             'airflow': '/backup/vvy_airflow/',
             'jupyterlab': '/backup/vvy_jupyterlab/',
-            'private_library': '/backup/private_library/'
+            'private_library': '/backup/private_library/',
+            'document': '/backup/document/'
         },
         **kwargs
     ):
@@ -45,7 +46,8 @@ class Backup:
             'private_media_server': '/backup/vvy_media_server/',
             'airflow': '/backup/vvy_airflow',
             'jupyterlab': '/backup/vvy_jupyterlab/',
-            'private_library': '/backup/private_library/'
+            'private_library': '/backup/private_library/',
+            'document': '/backup/document/'
             }
         '''
         self.endpoint_url = endpoint_url
@@ -61,9 +63,14 @@ class Backup:
         self.s3 = S3(**self.s3_args_dict)
         self.paths = paths
 
-    def get_s3_changes(self) -> dict:
+    def get_s3_changes(self, delete_more: int = 2) -> dict:
         '''
         Get changes for S3.
+
+        Parameters
+        ----------
+        delete_more : int, optional
+            The number after which we will delete objects, by default 2
 
         Returns
         -------
@@ -79,7 +86,7 @@ class Backup:
             s3_result_list = [i.replace(path[1:], '') for i in self.s3.get_objects_list(start_position=path[1:])]
             # Get result
             s3_result_list.sort(reverse=True)
-            delete_list = [i for i in s3_result_list[2:] if i.endswith('zip')]
+            delete_list = [i for i in s3_result_list[delete_more:] if i.endswith('zip')]
             add_list = [i for i in list(set(local_result_list).difference(set(s3_result_list))) if i.endswith('zip')]
             result[path] = {
                 'delete': delete_list,
@@ -87,7 +94,7 @@ class Backup:
             }
         return result
 
-    def update_s3(self, dict_path: str) -> None:
+    def update_s3(self, dict_path: str, delete_more: int = 2) -> None:
         '''
         Update files in s3.
 
@@ -95,8 +102,10 @@ class Backup:
         ----------
         dict_path : str
             Path in self.paths.
+        delete_more : int, optional
+            The number after which we will delete objects, by default 2
         '''
-        result = self.get_s3_changes()
+        result = self.get_s3_changes(delete_more=delete_more)
         path = self.paths[dict_path]
         result_path = result.get(path)
         if result_path['delete']:
