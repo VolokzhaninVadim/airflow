@@ -112,8 +112,8 @@ case "$1" in
       # With the "Local" and "Sequential" executors it should all run in one container.
       airflow scheduler &
     fi
+    echo "CREATE USER $LOGIN_NAME $EMAIL"
     airflow users create -r Admin -u $LOGIN_NAME -e "$EMAIL" -f $LOGIN_NAME -l "$LOGIN_NAME" -p "$PASSWORD_AIRFLOW"
-    echo "CREATE USER"
     exec airflow webserver
     ;;
   worker|scheduler)

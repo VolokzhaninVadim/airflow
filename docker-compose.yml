@@ -15,7 +15,7 @@ services:
         ports:
             - "5432:5432"
         networks:
-            - bridge
+            - default
 
     webserver:
         build:
@@ -33,10 +33,9 @@ services:
         volumes:
             - /opt/cuda:/usr/local/cuda
             - ./dags/:/usr/local/airflow/dags
-            - /home/volokzhanin/docker/private_cloud/proxy/certs/:/certs
             - /mnt/backup/backup:/backup
-        ports:
-            - "8080:8080"
+        # ports:
+        #     - "8080:8080"
         devices:
             - /dev/nvidia0
             - /dev/nvidiactl
@@ -51,15 +50,9 @@ services:
             timeout: 30s
             retries: 3
         networks:
-            - bridge
+            - default
 
 networks:
-  bridge:
-    driver: bridge
-    ipam:
-     config:
-       - subnet: 172.10.1.0/16
-         gateway: 172.10.1.1
-         aux_addresses:
-           postgres: 172.10.1.10
-           webserver: 172.10.1.20
+  default:
+    external: true
+    name: volokzhanin
