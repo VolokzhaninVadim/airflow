@@ -36,6 +36,6 @@ rsync --partial --progress $DIRECTORY_TARGET/$FILE'_'$PROJECT'_''.'$ARCHIVE_TYPE
 rm $DIRECTORY_TARGET/$FILE'_'$PROJECT'_''.'$ARCHIVE_TYPE'.'$GPG_TYPE
 
 echo $(date '+%Y-%m-%d %H %M %S') 'Delete files older than n days'
-find $DIRECTORY_S3 -mtime +62 \
+find $DIRECTORY_S3 -mtime +14 \
     -type f \
     -delete
