@@ -32,5 +32,5 @@ print(FERNET_KEY)
 airflow variables export variables.txt
 ```
 ## Backup
-For backup use [airflow_backup.sh](./airflow_backup.sh) and [dag airflow](https://github.com/VolokzhaninVadim/airflow/blob/main/dags/backup_s3.py).
+For backup use [backup-server](https://github.com/VolokzhaninVadim/duplicati).
 
